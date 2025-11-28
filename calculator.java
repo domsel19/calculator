@@ -8,77 +8,88 @@ import java.awt.*;
 import javax.swing.*;
 
 public class calculator extends JFrame implements ActionListener {
-    JButton button1;
-    JButton button2;
-    JButton button3;
-    JButton button4;
-    JButton button5;
-    JButton button6;
-    JButton button7;
-    JButton button8;
-    JButton button9;
-    JButton button10;
-    JButton button11;
-    JButton button12;
-    JButton button13;
-    JButton button14;
-    JButton button15;
-    JButton button16;
-    JButton button17;
-    JLabel calculationlabel;
-    JLabel rescalc;
-    JPanel panel;
-    JPanel panel2;
-    JPanel panel3;
+    // create variables for calculation
+    boolean number1 = true;
     double ergebnis;
     double zahl1;
     double zahl2;
-    double zahl3;
-    boolean zaehler = true;
-    int test = 0;
     String currentInput = "";
     String operator = "";
+    JLabel calculationlabel = new JLabel();
+    JLabel rescalc = new JLabel();
+    Font font = new Font("Arial", Font.PLAIN, 32);
+    Font buttonfont = new Font("Arial", Font.PLAIN, 28);
 
     public calculator() {
+        // settings for windows
         this.setTitle("Calculator");
         this.setSize(800, 400);
         this.setLocation(250, 140);
 
+        // panel for full screen
+        JPanel screen = new JPanel();
+        screen.setLayout(new GridBagLayout());
+        GridBagConstraints c = new GridBagConstraints();
+        // panel for calculation, location: top, borderlayout
         JPanel result = new JPanel();
+        result.setLayout(new GridLayout(1, 2));
+        // panel for buttons with 5 columns/row
         JPanel buttons = new JPanel();
-        JPanel calculation = new JPanel();
+        buttons.setLayout(new GridLayout(0, 5));
 
-        calculationlabel = new JLabel();
-        calculationlabel.setHorizontalAlignment(JLabel.CENTER);
+        // label to show calculation
         calculationlabel.setPreferredSize(new Dimension(160, 40));
         calculationlabel.setOpaque(true);
         calculationlabel.setBackground(Color.GRAY);
+        calculationlabel.setHorizontalAlignment(JLabel.CENTER);
+        calculationlabel.setFont(font);
 
-        rescalc = new JLabel();
-        rescalc.setHorizontalAlignment(JLabel.CENTER);
+        // label to show result
         rescalc.setPreferredSize(new Dimension(160, 40));
         rescalc.setOpaque(true);
         rescalc.setBackground(Color.GREEN);
+        rescalc.setHorizontalAlignment(JLabel.CENTER);
+        rescalc.setFont(font);
 
+        // create buttons
         JButton plus = new JButton("+");
+        plus.setFont(buttonfont);
         JButton minus = new JButton("-");
+        minus.setFont(buttonfont);
         JButton mult = new JButton("*");
+        mult.setFont(buttonfont);
         JButton div = new JButton("/");
+        div.setFont(buttonfont);
         JButton zero = new JButton("0");
+        zero.setFont(buttonfont);
         JButton one = new JButton("1");
+        one.setFont(buttonfont);
         JButton two = new JButton("2");
+        two.setFont(buttonfont);
         JButton three = new JButton("3");
+        three.setFont(buttonfont);
         JButton four = new JButton("4");
+        four.setFont(buttonfont);
         JButton five = new JButton("5");
+        five.setFont(buttonfont);
         JButton six = new JButton("6");
+        six.setFont(buttonfont);
         JButton seven = new JButton("7");
+        seven.setFont(buttonfont);
         JButton eight = new JButton("8");
+        eight.setFont(buttonfont);
         JButton nine = new JButton("9");
+        nine.setFont(buttonfont);
         JButton calc = new JButton("=");
-        JButton comma = new JButton(",");
+        calc.setFont(new Font("Arial", Font.BOLD, 28));
+        JButton dot = new JButton(".");
+        dot.setFont(buttonfont);
         JButton reset = new JButton("C");
+        reset.setFont(buttonfont);
         JButton del = new JButton("DEL");
+        del.setFont(buttonfont);
 
+        // add ActionListener to buttons
         plus.addActionListener(this);
         minus.addActionListener(this);
         mult.addActionListener(this);
@@ -94,12 +105,11 @@ public class calculator extends JFrame implements ActionListener {
         eight.addActionListener(this);
         nine.addActionListener(this);
         calc.addActionListener(this);
-        comma.addActionListener(this);
+        dot.addActionListener(this);
         reset.addActionListener(this);
+        del.addActionListener(this);
 
-        result.setLayout(new BorderLayout());
-        buttons.setLayout(new GridLayout(0, 5));
-
+        // add buttons to buttonpanel
         buttons.add(seven);
         buttons.add(eight);
         buttons.add(nine);
@@ -116,14 +126,24 @@ public class calculator extends JFrame implements ActionListener {
         buttons.add(plus);
         buttons.add(minus);
         buttons.add(zero);
-        buttons.add(comma);
+        buttons.add(dot);
         buttons.add(calc);
 
-        result.add(buttons, BorderLayout.CENTER);
-        result.add(calculation, BorderLayout.SOUTH);
-        result.add(calculationlabel, BorderLayout.NORTH);
-        result.add(rescalc, BorderLayout.EAST);
-        this.add(result);
+        // add calculationlabel and rescalclabel to screenpanel
+        result.add(calculationlabel);
+        result.add(rescalc);
+
+        // add buttons and screen to full panel
+        c.gridx = 0;
+        c.gridy = 0;
+        c.weightx = 1;
+        c.weighty = 1;
+        c.fill = GridBagConstraints.BOTH;
+        screen.add(result, c);
+        c.gridy = 1;
+        c.weighty = 2;
+        screen.add(buttons, c);
+        this.add(screen);
     }
 
     public static void main(String[] args) {
@@ -148,15 +168,20 @@ public class calculator extends JFrame implements ActionListener {
 
         if (value.matches("[0-9]")) {
             currentInput += value;
-            calculationlabel.setText(zahl1 + " " + operator + " " + zahl2);
+            if (number1 == true) {
+                calculationlabel.setText(String.valueOf(currentInput));
+            } else {
+                calculationlabel.setText(zahl1 + " " + operator + " " + currentInput);
+            }
             return;
         }
 
         if (value.matches("[+\\-*/]")) {
+            number1 = false;
             zahl1 = Double.parseDouble(currentInput);
             operator = value;
             currentInput = "";
-            calculationlabel.setText(zahl1 + " " + operator + " " + zahl2);
+            calculationlabel.setText(zahl1 + " " + operator + " " + currentInput);
             return;
         }
 
@@ -178,10 +203,14 @@ public class calculator extends JFrame implements ActionListener {
                     ergebnis = zahl1 / zahl2;
                     break;
             }
+            /*
+             * if (ergebnis % 1 == 0) {
+             * zahl1 =
+             * }
+             */
 
             calculationlabel.setText(String.valueOf(zahl1 + " " + operator + " " + zahl2));
             rescalc.setText(String.valueOf(ergebnis));
-            currentInput = String.valueOf(ergebnis);
             return;
         }
 
@@ -190,16 +219,37 @@ public class calculator extends JFrame implements ActionListener {
             operator = "";
             zahl1 = 0;
             zahl2 = 0;
+            number1 = true;
             calculationlabel.setText("");
             rescalc.setText("");
+            return;
         }
 
-        if (value.equals("del")) {
-            if (currentInput.length() > 0) {
+        if (value.equals("DEL")) {
+            if (!currentInput.isEmpty()) {
                 currentInput = currentInput.substring(0, currentInput.length() - 1);
-                calculationlabel.setText(currentInput);
             }
 
+            if (number1 == true) {
+                calculationlabel.setText(currentInput);
+                rescalc.setText("");
+            } else {
+                calculationlabel.setText(zahl1 + "" + operator + "" + currentInput);
+                rescalc.setText("");
+            }
+            return;
+        }
+
+        if (value.equals(".")) {
+            if (!currentInput.contains(".")) {
+                currentInput += ".";
+                if (number1 == true) {
+                    calculationlabel.setText(currentInput);
+                } else {
+                    calculationlabel.setText(zahl1 + "" + operator + "" + currentInput);
+                }
+            }
+            return;
         }
     }
 
